@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 8080
 const KEY_JWT = "badObviousTestKey"
+module.exports = KEY_JWT
+const authorization = require('./authorization')
 // const dbPassword = process.env.DB_PASSWORD
 // const dbName = process.env.DB_NAME
 const jwt = require('jsonwebtoken')
@@ -31,19 +33,6 @@ app.use((req, res, next) => {
 	next()
 })
 
-const checkAuth = (req, res, next) => {
-	try {
-		const token = req.headers.authorization.split(" ")[1]
-		console.log(token)
-		const decoded = jwt.verify(token, KEY_JWT)
-		console.log(decoded)
-		req.userData = decoded
-		next()
-	} catch (error) {
-		console.log(error)
-		return res.status(401).json({ message: 'auth failed' })
-	}
-}
 // todo prepared statement fichier separe
 // todo	tester sql injections ' union SELECT name, password FROM users WHERE name <> '
 // tester différent work factor sur bcrypt
@@ -101,7 +90,8 @@ app.post('/login', async (req, res) => {
 	})
 })
 
-app.get('/friends/:id', async (req, res) => {
+app.get('/friends/:id', authorization, async (req, res) => {
+	console.log('request sent by :', req.userData)
 	const user = req.params.id
 	const database = req.app.locals.database
 	console.log('getting friends of userId :', user)
