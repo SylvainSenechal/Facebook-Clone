@@ -8,8 +8,6 @@ const App = props => {
   const [user, setUser] = useState({
     pseudoLogin: "",
     passwordLogin: "",
-    pseudoRegister: "",
-    passwordRegister: "",
     loggedIn: false,
     token: ""
   })

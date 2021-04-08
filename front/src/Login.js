@@ -11,24 +11,24 @@ const Login = ({user, setUser, ...rest}) => {
     console.log('ok')
     console.log(pseudoRegister)
     console.log(passwordRegister)
-    let result = await fetch('http://localhost:8080/register', {
+    const result = await fetch('http://localhost:8080/register', {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pseudo: pseudoRegister, password: passwordRegister })
     })
-    let readableResult = await result.json()
+    const readableResult = await result.json()
     console.log(readableResult)
   }
 
   const handleSubmitLogin = async event => {
     event.preventDefault()
     console.log('login')
-    let result = await fetch('http://localhost:8080/login', {
+    const result = await fetch('http://localhost:8080/login', {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pseudo: user.pseudoLogin, password: user.passwordLogin })
     })
-    let readableResult = await result.json()
+    const readableResult = await result.json()
     console.log(readableResult)
     if (readableResult.message === "successfull") {
       setUser(prev => ({...prev, token: readableResult.token, loggedIn: true}))

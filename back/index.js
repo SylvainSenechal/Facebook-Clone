@@ -13,6 +13,7 @@ const databaseFile = new sqlite3('facebook.db', { verbose: console.log })
 app.locals.database = databaseFile
 
 const createDatabase = require('./dbCreation.js')
+const e = require('express')
 
 createDatabase(databaseFile)
 
@@ -22,7 +23,7 @@ console.log('Listening on : ', port)
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*')
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-type')
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-type, Authorization')
 	if (req.method === 'OPTIONS') {
 		res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
 		return res.status(200).json({})
@@ -68,35 +69,58 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
 	const database = req.app.locals.database
 	console.log(req.body)
-	const statement = database.prepare("SELECT pseudo, password FROM user WHERE pseudo = ?")
+	const statement = database.prepare("SELECT user_id, pseudo, password FROM user WHERE pseudo = ?")
 	const user = statement.get(req.body.pseudo)
 
-	console.log(user)
+	console.log('found user in database :\n', user)
 
 	if (!user) {
 		return res.status(401).json({ message: 'auth failed' })
 	}
 	bcrypt.compare(req.body.password, user.password, (err, result) => {
-		console.log(err)
-		console.log(result)
+		console.log('error  bcrypt :', err)
+		console.log('result bcrypt :', result)
 		if (err) {
 			return res.status(401).json({ message: 'auth failed' })
 		}
 		if (result === true) {
 			const token = jwt.sign({
-				email: user.email,
-				userId: user._id
+				userId: user.user_id,
+				pseudo: user.pseudo,
 			},
 				KEY_JWT,
 				{
-					expiresIn: "1h"
+					expiresIn: "1min"
 				}
 			)
+			console.log(token)
 			return res.status(200).json({ message: 'successfull', token: token })
 		} else {
 			return res.status(401).json({ message: 'auth failed' })
 		}
 	})
+})
+
+app.get('/friends/:id', async (req, res) => {
+	const user = req.params.id
+	const database = req.app.locals.database
+	console.log('getting friends of userId :', user)
+	const f1 = database.prepare("SELECT rowid, id_friend2 as id_friend, pseudo_friend2 as pseudo FROM friendship WHERE id_friend1 = ?")
+	console.log(f1.all(user))
+	const f2 = database.prepare("SELECT rowid, id_friend1 as id_friend, pseudo_friend1 as pseudo FROM friendship WHERE id_friend2 = ?")
+	console.log(f2.all(user))
+	let r1 = f1.all(user)
+	let r2 = f2.all(user)
+	let friends = []
+	console.log(r1.length)
+	console.log(r2.length)
+	for (let friend of r1) {
+		friends.push({ id: friend.id_friend, pseudo: friend.pseudo })
+	}
+	for (let friend of r2) {
+		friends.push({ id: friend.id_friend, pseudo: friend.pseudo })
+	}
+	return res.status(200).json({ friendsFound: friends })
 })
 
 app.use((req, res, next) => {
