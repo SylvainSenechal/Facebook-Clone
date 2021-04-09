@@ -15,7 +15,6 @@ const databaseFile = new sqlite3('facebook.db', { verbose: console.log })
 app.locals.database = databaseFile
 
 const createDatabase = require('./dbCreation.js')
-const e = require('express')
 
 createDatabase(databaseFile)
 
@@ -34,7 +33,7 @@ app.use((req, res, next) => {
 })
 
 // todo prepared statement fichier separe
-// todo	tester sql injections ' union SELECT name, password FROM users WHERE name <> '
+// todo	tester sql injections ' union SELECT name, password FROM users WHERE name <> ' + sanitize les inputs ?
 // tester différent work factor sur bcrypt
 app.post('/register', async (req, res) => {
 	console.log(req.body)
@@ -111,6 +110,42 @@ app.get('/friends/:id', authorization, async (req, res) => {
 		friends.push({ id: friend.id_friend, pseudo: friend.pseudo })
 	}
 	return res.status(200).json({ friendsFound: friends })
+})
+
+app.get('/posts/:id', authorization, async (req, res) => {
+	console.log('request sent by :', req.userData)
+	const user = req.params.id
+	const database = req.app.locals.database
+	const postsQuery = database.prepare(`
+		SELECT DISTINCT id_post, pseudo_poster, content, nb_likes 
+		FROM posts, friendship 
+		WHERE id_poster = friendship.id_friend1 AND ? = friendship.id_friend2
+		OR id_poster = friendship.id_friend2 AND ? = friendship.id_friend1
+		OR id_poster = ?
+	`)
+	const posts = postsQuery.all(user, user, user)
+	const postsProcessed = []
+	for (let post of posts) {
+		postsProcessed.push({
+			idPost: post.id_post,
+			pseudo: post.pseudo_poster,
+			content: post.content,
+			nb_likes: post.nb_likes
+		})
+	}
+
+	return res.status(200).json({ postsFound: postsProcessed })
+})
+
+app.post('/newPost', authorization, async (req, res) => {
+	console.log('request sent by :', req.userData)
+	const database = req.app.locals.database
+	const messageSent = req.body.message
+	const insertMessage = database.prepare("INSERT INTO posts (id_poster, pseudo_poster, content, nb_likes) VALUES (?, ?, ?, ?)")
+	insertMessage.run(req.userData.userId, req.userData.pseudo, messageSent, 0)
+	res.status(201).json({
+		message: 'Post created'
+	})
 })
 
 app.use((req, res, next) => {

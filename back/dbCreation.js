@@ -37,7 +37,7 @@ const createDatabase = database => {
       `
   )
   trigger.run()
-
+  // todo : add date post
   const postCreation = database.prepare(
     `CREATE TABLE IF NOT EXISTS
   			posts (
@@ -71,6 +71,10 @@ const createDatabase = database => {
     console.log('err' + error)
   }
 
+  const insertMessage = database.prepare("INSERT INTO posts (id_poster, pseudo_poster, content, nb_likes) VALUES (?, ?, ?, ?)")
+  // insertMessage.run(4, "emmanuelle", "je suis emmanuelle", 0)
+  // insertMessage.run(4, "emmanuelle", "je crois que je suis emmanuelle", 0)
+
   // ----- Checking users -----
   console.log('USERS : ')
   const statement4 = database.prepare("SELECT * FROM user")
@@ -81,10 +85,10 @@ const createDatabase = database => {
   const statement5 = database.prepare("SELECT rowid, * FROM friendship")
   console.log(statement5.all())
 
-   // ----- Checking posts -----
-   console.log('POSTS : ')
-   const statement6 = database.prepare("SELECT rowid, * FROM posts")
-   console.log(statement6.all())
+  // ----- Checking posts -----
+  console.log('POSTS : ')
+  const statement6 = database.prepare("SELECT rowid, * FROM posts")
+  console.log(statement6.all())
 }
 
 module.exports = createDatabase

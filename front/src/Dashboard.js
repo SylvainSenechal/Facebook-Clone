@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import FriendList from './friendList';
 import PostCreation from './PostCreation'
+import ListPost from './ListPost'
 
 const Dashboard = ({ user, setUser }) => {
   console.log(user)
@@ -33,6 +34,7 @@ const Dashboard = ({ user, setUser }) => {
       <button onClick={logout}> Logout </button>
       <FriendList userId={userId} token={user.token} />
       <PostCreation userId={userId} token={user.token} />
+      <ListPost userId={userId} token={user.token} />
     </>
   )
 }
