@@ -7,7 +7,6 @@ const createDatabase = database => {
 	     		password TEXT
       	)`
   )
-  // friendship_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
   const friendshipCreation = database.prepare(
     `CREATE TABLE IF NOT EXISTS
@@ -39,6 +38,18 @@ const createDatabase = database => {
   )
   trigger.run()
 
+  const postCreation = database.prepare(
+    `CREATE TABLE IF NOT EXISTS
+  			posts (
+          id_post INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+					id_poster INTEGER NOT NULL,
+					pseudo_poster TEXT,
+          content TEXT,
+          nb_likes INTEGER,
+					FOREIGN KEY(id_poster) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        )`
+  )
+  postCreation.run()
   // ----- Creating users -----
 
   const statement2 = database.prepare("INSERT INTO user (pseudo, password) VALUES (?, ?)")
@@ -62,13 +73,18 @@ const createDatabase = database => {
 
   // ----- Checking users -----
   console.log('USERS : ')
-  const statement4 = database.prepare("SELECT user_id, rowid, * FROM user")
+  const statement4 = database.prepare("SELECT * FROM user")
   console.log(statement4.all())
-  
+
   // ----- Checking friends -----
   console.log('FRIENDSHIPS : ')
   const statement5 = database.prepare("SELECT rowid, * FROM friendship")
   console.log(statement5.all())
+
+   // ----- Checking posts -----
+   console.log('POSTS : ')
+   const statement6 = database.prepare("SELECT rowid, * FROM posts")
+   console.log(statement6.all())
 }
 
 module.exports = createDatabase

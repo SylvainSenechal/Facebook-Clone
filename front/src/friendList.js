@@ -6,10 +6,10 @@ const FriendList = ({ userId, token }) => {
 
   const [friends, setFriends] = useState([])
   console.log(friends)
-  friends.map(elem => console.log(elem))
 
   useEffect(() => {
     const getFriendList = async () => {
+      // todo handle failed fetch
       const result = await fetch(`http://localhost:8080/friends/${userId}`, {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -25,7 +25,7 @@ const FriendList = ({ userId, token }) => {
 
   return (
     <>
-      <p> Hello, you are connected as {userId}, user id is {userId} </p>
+      <p> Hello, these are your friends : </p>
       <ul>
         {friends.map(friend => (
           <li key={friend.id}>

@@ -14,10 +14,10 @@ const App = props => {
 
   console.log(user)
 
-  return user.loggedIn 
-    ? <Dashboard user={user} /> 
+  return user.loggedIn
+    ? <Dashboard user={user} setUser={setUser} />
     : <Login user={user} setUser={setUser} />
-  
+
 }
 
 
