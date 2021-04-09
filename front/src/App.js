@@ -17,8 +17,6 @@ const App = props => {
   return user.loggedIn
     ? <Dashboard user={user} setUser={setUser} />
     : <Login user={user} setUser={setUser} />
-
 }
-
 
 export default App;

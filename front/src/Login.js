@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import Footer from './Footer'
 
-const Login = ({user, setUser, ...rest}) => {
+const Login = ({ user, setUser, ...rest }) => {
   console.log('Login props : ', user)
 
   const [pseudoRegister, setPseudoRegister] = useState("My Pseudo")
@@ -31,65 +32,48 @@ const Login = ({user, setUser, ...rest}) => {
     const readableResult = await result.json()
     console.log(readableResult)
     if (readableResult.message === "successfull") {
-      setUser(prev => ({...prev, token: readableResult.token, loggedIn: true}))
+      setUser(prev => ({ ...prev, token: readableResult.token, loggedIn: true }))
     }
     // const token = readableResult.token
   }
 
   return (
-    <>
-      <div className="App">
-        
-        <p> Register </p>
-        <form onSubmit={handleSubmitRegistration}>
-          <label htmlFor="pseudo"> Enter your name:
+    <div className="LoginPage">
+      <div className="formsLoginRegister">
+        <div>
+          <p> Register </p>
+          <form onSubmit={handleSubmitRegistration}>
+            <label htmlFor="pseudo"> Enter your name:
             <input type="text" name="pseudo" id="pseudo" value={pseudoRegister} onChange={e => setPseudoRegister(e.target.value)} required />
-          </label>
-          <label htmlFor="password"> Enter your password:
+            </label>
+            <label htmlFor="password"> Enter your password:
             <input type="password" name="password" id="password" value={passwordRegister} onChange={e => setPasswordRegister(e.target.value)} required />
-          </label>
-          <input type="submit" value="Register" />
-        </form>
-        
-        <p> Login </p>
-        <form onSubmit={handleSubmitLogin}>
-          <label htmlFor="pseudo"> Enter your name:
-            <input type="text" name="pseudo" id="pseudo" value={user.pseudoLogin} 
-              onChange={e => setUser(prev => ({...prev, pseudoLogin: e.target.value}))} required 
-            />
-          </label>
-          <label htmlFor="password"> Enter your password:
+            </label>
+            <input type="submit" value="Register" />
+          </form>
+          <div className="borderLine" />
+        </div>
+
+        <div>
+          <p> Login </p>
+          <form onSubmit={handleSubmitLogin}>
+            <label htmlFor="pseudo"> Enter your name:
+            <input type="text" name="pseudo" id="pseudo" value={user.pseudoLogin}
+                onChange={e => setUser(prev => ({ ...prev, pseudoLogin: e.target.value }))} required
+              />
+            </label>
+            <label htmlFor="password"> Enter your password:
             <input type="password" name="password" id="password" value={user.passwordLogin}
-              onChange={e => setUser(prev => ({...prev, passwordLogin: e.target.value}))} required 
-            />
-          </label>
-          <input type="submit" value="Register" />
-        </form>
-        
+                onChange={e => setUser(prev => ({ ...prev, passwordLogin: e.target.value }))} required
+              />
+            </label>
+            <input type="submit" value="Register" />
+          </form>
+          <div className="borderLine" />
+        </div>
       </div>
-
-      {user.loggedIn
-        ? <CondComponent1 />
-        : <CondComponent2 />
-      }
-    </>
-  )
-}
-
-const CondComponent1 = props => {
-  return (
-    <>
-      <p> Je suis un GENTIL component conditionnel</p>
-    </>
-  )
-}
-
-const CondComponent2 = props => {
-
-  return (
-    <>
-      <p> Je suis un VILAIN component conditionnel</p>
-    </>
+      < Footer />
+    </div>
   )
 }
 
