@@ -25,7 +25,7 @@ const ListPost = ({ userId, token }) => {
 
   return (
     <>
-      <p> Hello, these are your friends : </p>
+      <p> Hello, these are your friend's post </p>
       {
         posts.map(post => (
           <div key={post.idPost}> {post.pseudo} {post.content} {post.nb_likes}</div>

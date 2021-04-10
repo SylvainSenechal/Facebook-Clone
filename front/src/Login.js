@@ -39,8 +39,8 @@ const Login = ({ user, setUser, ...rest }) => {
 
   return (
     <div className="LoginPage">
-      <div className="formsLoginRegister">
-        <div>
+      <div className="formsLoginRegister" >
+        <div className="logInfo" style={{"--order": 0}}>
           <p> Register </p>
           <form onSubmit={handleSubmitRegistration}>
             <label htmlFor="pseudo"> Enter your name:
@@ -54,7 +54,7 @@ const Login = ({ user, setUser, ...rest }) => {
           <div className="borderLine" />
         </div>
 
-        <div>
+        <div className="logInfo" style={{"--order": 1}}>
           <p> Login </p>
           <form onSubmit={handleSubmitLogin}>
             <label htmlFor="pseudo"> Enter your name:

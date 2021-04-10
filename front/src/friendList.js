@@ -24,7 +24,7 @@ const FriendList = ({ userId, token }) => {
   }, [])
 
   return (
-    <>
+    <div id="friends" class="dashboardElement">
       <p> Hello, these are your friends : </p>
       <ul>
         {friends.map(friend => (
@@ -33,8 +33,7 @@ const FriendList = ({ userId, token }) => {
           </li>
         ))}
       </ul>
-
-    </>
+    </div>
   )
 }
 

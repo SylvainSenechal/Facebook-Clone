@@ -38,15 +38,15 @@ const PostCreation = ({ userId, token }) => {
   }
 
   return (
-    <>
-      <form onSubmit={sendNewPost}>
-        <label>
-          Write a new post :
+
+    <form onSubmit={sendNewPost}>
+      <label>
+        Write a new post :
         <textarea value={message} onChange={e => setMessage(e.target.value)}> </textarea>
-        </label>
-        <input type="submit" value="Post new message" />
-      </form>
-    </>
+      </label>
+      <input type="submit" value="Post new message" />
+    </form>
+
   )
 }
 
