@@ -1,26 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const PostCreation = ({ userId, token }) => {
+const PostCreation = ({ userId, token, setRefresh }) => {
   const [message, setMessage] = useState("")
-
-  // useEffect(() => {
-  //   const getFriendList = async () => {
-  //     // todo handle failed fetch
-  //     const result = await fetch(`http://localhost:8080/friends/${userId}`, {
-  //       method: 'GET', // *GET, POST, PUT, DELETE, etc.
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${token}`
-  //       },
-  //     })
-  //     const readableResult = await result.json()
-  //     setFriends(readableResult.friendsFound)
-  //   }
-  //   getFriendList()
-  // }, [])
-  useEffect(() => {
-    console.log("oui")
-  }, [message])
 
   const sendNewPost = async event => {
     event.preventDefault()
@@ -35,6 +16,7 @@ const PostCreation = ({ userId, token }) => {
     })
     const readableResult = await result.json()
     console.log(readableResult)
+    setRefresh(refresh => refresh + 1)
   }
 
   return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const ListPost = ({ userId, token }) => {
+const ListPost = ({ userId, token, refresh }) => {
 
   const [posts, setPosts] = useState([])
   console.log(posts)
@@ -21,24 +21,28 @@ const ListPost = ({ userId, token }) => {
       console.log(posts)
     }
     getPostsList()
-  }, [])
+  }, [refresh])
 
   return (
     <>
       <p> Hello, these are your friend's post </p>
       {
         posts.map(post => (
-          <div key={post.idPost}> {post.pseudo} {post.content} {post.nb_likes}</div>
+          post.id_poster === userId
+            ? <div className="ownPost" key={post.idPost}>
+              <div> {post.id_poster} </div>
+              <div> {post.pseudo} </div>
+              <div> {post.content} </div>
+              <div> {post.nb_likes} </div>
+            </div>
+            : <div className="postFriend" key={post.idPost}>
+              <div> {post.id_poster} </div>
+              <div> {post.pseudo} </div>
+              <div> {post.content} </div>
+              <div> {post.nb_likes} </div>
+            </div>
         ))
       }
-      {/* <ul>
-        {friends.map(friend => (
-          <li key={friend.id}>
-            Friend id : {friend.id}, pseudo : {friend.pseudo}
-          </li>
-        ))}
-      </ul> */}
-
     </>
   )
 }

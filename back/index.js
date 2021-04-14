@@ -89,6 +89,51 @@ app.post('/login', async (req, res) => {
 	})
 })
 
+app.post('/friendRequest', authorization, async (req, res) => {
+	console.log(req.body)
+	const database = req.app.locals.database
+	const s1 = database.prepare("SELECT pseudo FROM user WHERE user_id = ?")
+	const pseudoAsker = s1.get(req.body.idAsker)
+	const pseudoAsked = s1.get(req.body.idAsked)
+	const statement = database.prepare("INSERT INTO friend_request (id_asker, id_asked, pseudo_asker, pseudo_asked) VALUES (?, ?, ?, ?)")
+	console.log(req.body.idAsker, req.body.idAsked, pseudoAsker, pseudoAsked)
+	statement.run(req.body.idAsker, req.body.idAsked, pseudoAsker.pseudo, pseudoAsked.pseudo)
+
+	res.status(201).json({
+		message: 'friend request sent'
+	})
+})
+
+app.get('/friendRequest/:id', authorization, async (req, res) => {
+	console.log(req.body)
+	const user = req.params.id
+	const database = req.app.locals.database
+	const statement = database.prepare("SELECT id_asker, pseudo_asker FROM friend_request WHERE id_asked = ?")
+	const result = statement.all(user)
+	console.log(result)
+	let asking = []
+	for (let ask of result) {
+		asking.push({ idAsker: ask.id_asker, pseudoAsker: ask.pseudo_asker })
+	}
+	
+	res.status(200).json({ friendsRequest: asking })
+})
+
+app.post('/acceptRequest', authorization, async (req, res) => {
+	console.log(req.body)
+	// todo destroy the friend request, check the friend request both ways
+	const database = req.app.locals.database
+	const statement = database.prepare("SELECT pseudo_asker, pseudo_asked FROM friend_request WHERE id_asker = ? AND id_asked = ?")
+	const friendRequest = statement.get(req.body.idAsker, req.body.idAsked)
+	console.log(friendRequest)
+	const addFriend = database.prepare("INSERT INTO friendship (id_friend1, id_friend2, pseudo_friend1, pseudo_friend2) VALUES (?, ?, ?, ?)")
+  addFriend.run(req.body.idAsker, req.body.idAsked, friendRequest.pseudo_asker, friendRequest.pseudo_asked)
+
+	res.status(201).json({
+		message: 'friend added'
+	})
+})
+
 app.get('/friends/:id', authorization, async (req, res) => {
 	console.log('request sent by :', req.userData)
 	const user = req.params.id
@@ -112,12 +157,36 @@ app.get('/friends/:id', authorization, async (req, res) => {
 	return res.status(200).json({ friendsFound: friends })
 })
 
+app.get('/findFriends/:name', authorization, async (req, res) => {
+	console.log('request sent by :', req.userData)
+	const name = req.params.name
+	const database = req.app.locals.database
+	console.log('Getting list of person with name like :', name)
+	console.log(name)
+	console.log(req.userData)
+	console.log(typeof name)
+
+	const findPeople = database.prepare(`
+		SELECT user_id, pseudo
+		FROM user
+		WHERE pseudo LIKE ?
+		AND user_id != ?`)
+
+	const foundPeople = findPeople.all(`%${name}%`, req.userData.userId)
+	let persons = []
+	for (let people of foundPeople) {
+		persons.push({ id: people.user_id, pseudo: people.pseudo })
+	}
+
+	return res.status(200).json({ friendsFound: persons })
+})
+
 app.get('/posts/:id', authorization, async (req, res) => {
 	console.log('request sent by :', req.userData)
 	const user = req.params.id
 	const database = req.app.locals.database
 	const postsQuery = database.prepare(`
-		SELECT DISTINCT id_post, pseudo_poster, content, nb_likes 
+		SELECT DISTINCT id_post, id_poster, pseudo_poster, content, nb_likes 
 		FROM posts, friendship 
 		WHERE id_poster = friendship.id_friend1 AND ? = friendship.id_friend2
 		OR id_poster = friendship.id_friend2 AND ? = friendship.id_friend1
@@ -128,6 +197,7 @@ app.get('/posts/:id', authorization, async (req, res) => {
 	for (let post of posts) {
 		postsProcessed.push({
 			idPost: post.id_post,
+			id_poster: post.id_poster,
 			pseudo: post.pseudo_poster,
 			content: post.content,
 			nb_likes: post.nb_likes

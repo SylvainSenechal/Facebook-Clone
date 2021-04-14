@@ -18,7 +18,7 @@
   padding: 30px;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: 1fr 7fr 2fr;
-  grid-template-areas: 'infos infos search search . logout'
+  grid-template-areas: 'infos infos search search showRequest logout'
                        'friends friends wall wall wall wall'
                        'legals legals footer footer footer footer';
   justify-items: stretch;
@@ -52,6 +52,23 @@
 
 #friends {
   grid-area: friends;
+}
+
+#showRequest {
+  grid-area: showRequest;
+}
+
+.ownPost, .postFriend {
+  display: flex;
+  justify-content: space-around;
+}
+
+.ownPost {
+  background: red;
+}
+
+.postFriend {
+  background: green;
 }
 
 #wall {

@@ -24,7 +24,7 @@ const FriendList = ({ userId, token }) => {
   }, [])
 
   return (
-    <div id="friends" class="dashboardElement">
+    <div id="friends" className="dashboardElement">
       <p> Hello, these are your friends : </p>
       <ul>
         {friends.map(friend => (

@@ -50,6 +50,21 @@ const createDatabase = database => {
         )`
   )
   postCreation.run()
+
+  const friendRequestCreation = database.prepare(
+    `CREATE TABLE IF NOT EXISTS
+  			friend_request (
+          id_request INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+					id_asker INTEGER NOT NULL,
+          id_asked INTEGER NOT NULL,
+					pseudo_asker TEXT,
+          pseudo_asked TEXT,
+          FOREIGN KEY(id_asker) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(id_asked) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+        )`
+  )
+  friendRequestCreation.run()
+
   // ----- Creating users -----
 
   const statement2 = database.prepare("INSERT INTO user (pseudo, password) VALUES (?, ?)")
@@ -89,6 +104,11 @@ const createDatabase = database => {
   console.log('POSTS : ')
   const statement6 = database.prepare("SELECT rowid, * FROM posts")
   console.log(statement6.all())
+
+    // ----- Checking friend request -----
+    console.log('POSTS : ')
+    const statement7 = database.prepare("SELECT rowid, * FROM friend_request")
+    console.log(statement7.all())
 }
 
 module.exports = createDatabase
