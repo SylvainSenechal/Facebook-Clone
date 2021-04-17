@@ -11,12 +11,10 @@ const authorization = (req, res, next) => {
       req.userData = decoded
       next()
     } catch (error) {
-      console.log("error verifying token : ", error)
-      return res.status(401).json({ message: 'auth failed' })
+      return res.status(401).json({ message: 'Unauthorized ressource access' })
     }
   } else {
-    console.log("no auth header found")
-    return res.status(401).json({ message: 'auth failed' })
+    return res.status(401).json({ message: 'Unauthorized ressource access' })
   }
 }
 

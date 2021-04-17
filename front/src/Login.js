@@ -31,7 +31,7 @@ const Login = ({ user, setUser, ...rest }) => {
     })
     const readableResult = await result.json()
     console.log(readableResult)
-    if (readableResult.message === "successfull") {
+    if (readableResult.message === "Authentication successful") {
       setUser(prev => ({ ...prev, token: readableResult.token, loggedIn: true }))
     }
     // const token = readableResult.token

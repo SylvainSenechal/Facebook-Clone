@@ -10,7 +10,7 @@ const FriendList = ({ userId, token }) => {
   useEffect(() => {
     const getFriendList = async () => {
       // todo handle failed fetch
-      const result = await fetch(`http://localhost:8080/friends/${userId}`, {
+      const result = await fetch(`http://localhost:8080/friends`, {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ const ShowRequest = ({ userId, token }) => {
   useEffect(() => {
     const getFriendRequest = async () => {
       // todo handle failed fetch
-      const result = await fetch(`http://localhost:8080/friendRequest/${userId}`, {
+      const result = await fetch(`http://localhost:8080/friendRequest`, {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'Content-Type': 'application/json',

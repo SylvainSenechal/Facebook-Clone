@@ -3,7 +3,7 @@ const createDatabase = database => {
     `CREATE TABLE IF NOT EXISTS
       	user (
         	user_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        	pseudo TEXT, 
+        	pseudo TEXT UNIQUE, 
 	     		password TEXT
       	)`
   )
@@ -68,23 +68,22 @@ const createDatabase = database => {
   // ----- Creating users -----
 
   const statement2 = database.prepare("INSERT INTO user (pseudo, password) VALUES (?, ?)")
-  // statement2.run("sylvain", "$2b$10$G8y0G4Q4bjNTmM9H0.bGjeYbx0hQpaZ1WbzCkoIq67I2JC/asOOaK")
   // statement2.run("vincent", "passw0rd hard")
   // statement2.run("denis", "passw0rd hard")
   // statement2.run("emmanuelle", "passw0rd hard")
 
   // ----- Inserting friends -----
   const statement3 = database.prepare("INSERT INTO friendship (id_friend1, id_friend2, pseudo_friend1, pseudo_friend2) VALUES (?, ?, ?, ?)")
-  try {
-    statement3.run(1, 2, "sylvain", "vincent")
-  } catch (error) {
-    console.log('err' + error)
-  }
-  try {
-    statement3.run(1, 4, "sylvain", "emmanuelle")
-  } catch (error) {
-    console.log('err' + error)
-  }
+  // try {
+  //   statement3.run(1, 2, "sylvain", "vincent")
+  // } catch (error) {
+  //   console.log('err' + error)
+  // }
+  // try {
+  //   statement3.run(1, 4, "sylvain", "emmanuelle")
+  // } catch (error) {
+  //   console.log('err' + error)
+  // }
 
   const insertMessage = database.prepare("INSERT INTO posts (id_poster, pseudo_poster, content, nb_likes) VALUES (?, ?, ?, ?)")
   // insertMessage.run(4, "emmanuelle", "je suis emmanuelle", 0)

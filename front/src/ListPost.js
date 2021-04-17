@@ -8,7 +8,7 @@ const ListPost = ({ userId, token, refresh }) => {
   useEffect(() => {
     const getPostsList = async () => {
       // todo handle failed fetch
-      const result = await fetch(`http://localhost:8080/posts/${userId}`, {
+      const result = await fetch(`http://localhost:8080/posts`, {
         method: 'GET', // *GET, POST, PUT, DELETE, etc.
         headers: {
           'Content-Type': 'application/json',

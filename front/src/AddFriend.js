@@ -36,7 +36,7 @@ const AddFriend = ({ userId, token }) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ idAsker: userId, idAsked: id })
+      body: JSON.stringify({ idAsked: id })
     })
     const readableResult = await result.json()
     console.log(readableResult)
