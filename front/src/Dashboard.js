@@ -40,13 +40,13 @@ const Dashboard = ({ user, setUser }) => {
         <div id="logout" className="dashboardElement">
           <button onClick={logout}> Logout </button>
         </div>
-        <FriendList userId={userId} token={user.token} />
+        <FriendList token={user.token} />
         <div id="wall" className="dashboardElement">
-          <PostCreation userId={userId} token={user.token} setRefresh={setRefresh} />
+          <PostCreation token={user.token} setRefresh={setRefresh} />
           <ListPost userId={userId} token={user.token} refresh={refresh} />
         </div>
         <div id="legals" className="dashboardElement"> Legals </div>
-        <AddFriend userId={userId} token={user.token} />
+        <AddFriend token={user.token} />
         <ShowRequest userId={userId} token={user.token} />
         < Footer />
       </div>

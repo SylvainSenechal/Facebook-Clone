@@ -132,13 +132,13 @@ app.get('/friendRequest', authorization, async (req, res) => {
 	for (let ask of result) {
 		asking.push({ idAsker: ask.id_asker, pseudoAsker: ask.pseudo_asker })
 	}
-	
+
 	res.status(200).json({ friendsRequest: asking })
 })
 
 app.post('/acceptRequest', authorization, async (req, res) => {
 	const idAsker = req.body.idAsker
-	const idAsked = req.body.idAsked
+	const idAsked = req.userData.userId
 	if (!idAsker || !idAsked) {
 		return res.status(400).json({
 			message: 'Request error'
@@ -147,7 +147,6 @@ app.post('/acceptRequest', authorization, async (req, res) => {
 	const database = req.app.locals.database
 	const statement = database.prepare("SELECT pseudo_asker, pseudo_asked FROM friend_request WHERE id_asker = ? AND id_asked = ?")
 	const friendRequest = statement.get(idAsker, idAsked)
-	console.log(friendRequest)
 	const addFriend = database.prepare("INSERT INTO friendship (id_friend1, id_friend2, pseudo_friend1, pseudo_friend2) VALUES (?, ?, ?, ?)")
 	const removeFriendRequest = database.prepare("DELETE FROM friend_request WHERE id_asker = ? AND id_asked = ?")
 	try {
@@ -242,6 +241,22 @@ app.post('/newPost', authorization, async (req, res) => {
 	insertMessage.run(req.userData.userId, req.userData.pseudo, message, 0)
 	res.status(201).json({
 		message: 'Post created'
+	})
+})
+
+app.post('/likePost', authorization, async (req, res) => {
+	console.log('request sent by :', req.userData)
+	const postId = req.body.postId
+	if (!postId) {
+		return res.status(400).json({
+			message: 'Request error'
+		})
+	}
+	const database = req.app.locals.database
+	const likePost = database.prepare("UPDATE posts SET nb_likes = nb_likes + 1 WHERE id_post = ?")
+	likePost.run(postId)
+	res.status(201).json({
+		message: 'Post liked'
 	})
 })
 

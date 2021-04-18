@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const ShowRequest = ({ userId, token }) => {
-  console.log('friendList userId :', userId)
-  console.log('dashboard token :', token)
-
+const ShowRequest = ({ token }) => {
   const [request, setRequest] = useState([])
 
   useEffect(() => {
@@ -18,23 +15,20 @@ const ShowRequest = ({ userId, token }) => {
       })
       const readableResult = await result.json()
       setRequest(readableResult.friendsRequest)
-      console.log(readableResult)
     }
     getFriendRequest()
   }, [])
 
   const acceptFriend = async id => {
-    console.log(id)
     const result = await fetch(`http://localhost:8080/acceptRequest`, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ idAsker: id, idAsked: userId })
+      body: JSON.stringify({ idAsker: id })
     })
-    const readableResult = await result.json()
-    console.log(readableResult)
+    // const readableResult = await result.json()
   }
 
   return (

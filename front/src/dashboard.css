@@ -59,8 +59,22 @@
 }
 
 .ownPost, .postFriend {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 1fr 2fr 8fr 1fr;
+  grid-template-areas: 'id pseudo message likes';
+}
+
+.idPost {
+  grid-area: id;
+}
+.pseudoPost {
+  grid-area: pseudo;
+}
+.messagePost {
+  grid-area: message;
+}
+.likesPost {
+  grid-area: likes;
 }
 
 .ownPost {

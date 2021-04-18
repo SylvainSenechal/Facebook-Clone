@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-const PostCreation = ({ userId, token, setRefresh }) => {
+const PostCreation = ({ token, setRefresh }) => {
   const [message, setMessage] = useState("")
 
   const sendNewPost = async event => {
@@ -14,8 +14,7 @@ const PostCreation = ({ userId, token, setRefresh }) => {
       },
       body: JSON.stringify({ message: message })
     })
-    const readableResult = await result.json()
-    console.log(readableResult)
+    // const readableResult = await result.json()
     setRefresh(refresh => refresh + 1)
   }
 

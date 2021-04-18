@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 
-const FriendList = ({ userId, token }) => {
-  console.log('friendList userId :', userId)
-  console.log('dashboard token :', token)
-
+const FriendList = ({ token }) => {
   const [friends, setFriends] = useState([])
-  console.log(friends)
 
   useEffect(() => {
     const getFriendList = async () => {

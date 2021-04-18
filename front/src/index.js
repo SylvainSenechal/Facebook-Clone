@@ -9,6 +9,4 @@ ReactDOM.render(
     <App />
   </React.StrictMode>,
   document.getElementById('root')
-
-  // root avec setAtuh bool qui envoie dans dashboard ou login selon état
 );

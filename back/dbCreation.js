@@ -104,10 +104,10 @@ const createDatabase = database => {
   const statement6 = database.prepare("SELECT rowid, * FROM posts")
   console.log(statement6.all())
 
-    // ----- Checking friend request -----
-    console.log('POSTS : ')
-    const statement7 = database.prepare("SELECT rowid, * FROM friend_request")
-    console.log(statement7.all())
+  // ----- Checking friend request -----
+  console.log('POSTS : ')
+  const statement7 = database.prepare("SELECT rowid, * FROM friend_request")
+  console.log(statement7.all())
 }
 
 module.exports = createDatabase

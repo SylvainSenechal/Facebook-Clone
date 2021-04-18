@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const AddFriend = ({ userId, token }) => {
-
+const AddFriend = ({ token }) => {
   const [friendSearch, setFriendSearch] = useState("")
   const [friendFound, setFriendFound] = useState([])
 
@@ -9,8 +8,6 @@ const AddFriend = ({ userId, token }) => {
     const getFriendsRecommended = async () => {
       // todo handle failed fetch
       if (friendSearch !== "") {
-
-
         const result = await fetch(`http://localhost:8080/findFriends/${friendSearch}`, {
           method: 'GET', // *GET, POST, PUT, DELETE, etc.
           headers: {
@@ -19,17 +16,13 @@ const AddFriend = ({ userId, token }) => {
           },
         })
         const readableResult = await result.json()
-        console.log(readableResult.friendsFound)
         setFriendFound(readableResult.friendsFound)
-        console.log(friendFound)
-
       }
     }
     getFriendsRecommended()
   }, [friendSearch])
 
   const addFriend = async id => {
-    console.log(id)
     const result = await fetch(`http://localhost:8080/friendRequest`, {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: {
@@ -38,8 +31,7 @@ const AddFriend = ({ userId, token }) => {
       },
       body: JSON.stringify({ idAsked: id })
     })
-    const readableResult = await result.json()
-    console.log(readableResult)
+    // const readableResult = await result.json()
   }
 
   return (

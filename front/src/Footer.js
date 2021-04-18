@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 const Footer = () => {
   return (
     <div id="footer" className="dashboardElement">
@@ -11,5 +9,3 @@ const Footer = () => {
 } 
 
 export default Footer;
-
-// commentaires posts

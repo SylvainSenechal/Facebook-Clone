@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const ListPost = ({ userId, token, refresh }) => {
-
   const [posts, setPosts] = useState([])
-  console.log(posts)
 
   useEffect(() => {
     const getPostsList = async () => {
@@ -16,12 +14,22 @@ const ListPost = ({ userId, token, refresh }) => {
         },
       })
       const readableResult = await result.json()
-      console.log(readableResult)
       setPosts(readableResult.postsFound)
-      console.log(posts)
     }
     getPostsList()
   }, [refresh])
+
+  const likePost = async postId => {
+    const result = await fetch(`http://localhost:8080/likePost`, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ postId: postId })
+    })
+    // const readableResult = await result.json()
+  }
 
   return (
     <>
@@ -30,16 +38,24 @@ const ListPost = ({ userId, token, refresh }) => {
         posts.map(post => (
           post.id_poster === userId
             ? <div className="ownPost" key={post.idPost}>
-              <div> {post.id_poster} </div>
-              <div> {post.pseudo} </div>
-              <div> {post.content} </div>
-              <div> {post.nb_likes} </div>
+              <div className="idPost" > {post.id_poster} </div>
+              <div className="pseudoPost" > {post.pseudo} </div>
+              <div className="messagePost" > {post.content} </div>
+              <div className="likesPost" > {post.nb_likes} likes
+                <div>
+                  <button onClick={() => likePost(post.idPost)}> + </button>
+                </div>
+              </div>
             </div>
             : <div className="postFriend" key={post.idPost}>
-              <div> {post.id_poster} </div>
-              <div> {post.pseudo} </div>
-              <div> {post.content} </div>
-              <div> {post.nb_likes} </div>
+              <div className="idPost" > {post.id_poster} </div>
+              <div className="pseudoPost" > {post.pseudo} </div>
+              <div className="messagePost" > {post.content} </div>
+              <div className="likesPost" > {post.nb_likes} likes
+                <div>
+                  <button onClick={() => likePost(post.idPost)}> + </button>
+                </div>
+              </div>
             </div>
         ))
       }
