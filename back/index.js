@@ -1,3 +1,7 @@
+// todo : prepared statement fichier separe
+// todo : persistence login, refresh token
+// todo : voir dockers
+
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt') // https://www.martinstoeckli.ch/hash/en/index.php
@@ -22,7 +26,6 @@ createDatabase(databaseFile)
 app.use(express.json())
 app.listen(port)
 console.log('Listening on : ', port)
-// todo prepared statement fichier separe
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*')

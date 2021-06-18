@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 const AddFriend = ({ token }) => {
   const [friendSearch, setFriendSearch] = useState("")
   const [friendFound, setFriendFound] = useState([])
-
+  
   useEffect(() => {
     const getFriendsRecommended = async () => {
       // todo handle failed fetch
+      console.log(`http://localhost:8080/findFriends/${friendSearch}`)
       if (friendSearch !== "") {
         const result = await fetch(`http://localhost:8080/findFriends/${friendSearch}`, {
           method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -16,6 +17,7 @@ const AddFriend = ({ token }) => {
           },
         })
         const readableResult = await result.json()
+        console.log(readableResult)
         setFriendFound(readableResult.friendsFound)
       }
     }

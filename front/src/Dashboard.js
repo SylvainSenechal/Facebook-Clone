@@ -27,6 +27,7 @@ const Dashboard = ({ user, setUser }) => {
   // })
 
   const logout = () => {
+    window.localStorage.setItem('token', "")
     setUser(prev => ({ ...prev, loggedIn: false, token: "" }))
   }
 
