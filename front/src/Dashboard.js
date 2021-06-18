@@ -28,7 +28,8 @@ const Dashboard = ({ user, setUser }) => {
 
   const logout = () => {
     window.localStorage.setItem('token', "")
-    setUser(prev => ({ ...prev, loggedIn: false, token: "" }))
+    window.sessionStorage.setItem('token', "")
+    setUser(prev => ({ ...prev, loggedIn: false, keepConnected: false, token: "" }))
   }
 
   return (

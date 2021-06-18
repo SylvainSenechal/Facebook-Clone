@@ -7,12 +7,15 @@ const App = props => {
 
   const [user, setUser] = useState({
     loggedIn: false,
+    keepConnected: false,
     token: ""
   })
 
+  console.log(user)
+
   useEffect(() => {
     const token = window.localStorage.getItem('token')
-    if (token !== '') {
+    if (token !== '' && token !== null) {
       const tokenData64URL = token.split('.')[1]
       const tokenB64 = tokenData64URL.replace(/-/g, '+').replace(/_/g, '/')
       const tokenPayload = JSON.parse(atob(tokenB64))
@@ -20,6 +23,7 @@ const App = props => {
       if (Date.now() / 1000 < exp) {
         setUser({
           loggedIn: true,
+          keepConnected: true,
           token: token
         })
       }

@@ -7,6 +7,7 @@ const Login = ({ setUser }) => {
   const [pseudoLogin, setPseudoLogin] = useState("")
   const [passwordLogin, setPasswordLogin] = useState("")
   const [messageRegister, setMessageRegister] = useState("")
+  const [keepConnected, setKeepConnected] = useState(false)
 
   const handleSubmitRegistration = async event => {
     event.preventDefault()
@@ -30,8 +31,14 @@ const Login = ({ setUser }) => {
     })
     const readableResult = await result.json()
     if (readableResult.message === "Authentication successful") {
-      setUser(prev => ({ ...prev, token: readableResult.token, loggedIn: true }))
-      window.localStorage.setItem('token', readableResult.token)
+      setUser(prev => ({ ...prev, token: readableResult.token, loggedIn: true, keepConnected: keepConnected}))
+      if (keepConnected) {
+        window.localStorage.setItem('token', readableResult.token)
+      } else {
+        window.sessionStorage.setItem('token', readableResult.token)
+      }
+      console.log(window.localStorage)
+      console.log(window.sessionStorage)
     }
   }
 
@@ -67,6 +74,14 @@ const Login = ({ setUser }) => {
               {/* <input type="password" name="password" id="passwordLogin" value={user.passwordLogin}
                 onChange={e => setUser(prev => ({ ...prev, passwordLogin: e.target.value }))} required
               /> */}
+            </label>
+            <label>
+              Keep me connected :
+              <input
+                name="keepConnected"
+                type="checkbox"
+                checked={keepConnected}
+                onChange={e => setKeepConnected(e.target.checked)} />
             </label>
             <input type="submit" value="Register" />
           </form>
