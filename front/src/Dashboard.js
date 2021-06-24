@@ -18,18 +18,17 @@ const Dashboard = ({ user, setUser }) => {
 
   console.log("token payload :", pseudo, userId, iat, exp)
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     console.log('oui')
-  //     setDate(Math.floor(Date.now() / 1000))
-  //   }, 1000)
-  //   return () => clearTimeout(timer);
-  // })
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDate(Math.floor(Date.now() / 1000))
+    }, 1000)
+    return () => clearTimeout(timer);
+  }, [])
 
   const logout = () => {
-    window.localStorage.setItem('token', "")
-    window.sessionStorage.setItem('token', "")
-    setUser(prev => ({ ...prev, loggedIn: false, keepConnected: false, token: "" }))
+    window.localStorage.setItem('refreshToken', "")
+    window.sessionStorage.setItem('refreshToken', "")
+    setUser(prev => ({ ...prev, loggedIn: false, keepConnected: false, token: "", refreshToken: "" }))
   }
 
   return (

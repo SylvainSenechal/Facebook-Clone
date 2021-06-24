@@ -31,11 +31,11 @@ const Login = ({ setUser }) => {
     })
     const readableResult = await result.json()
     if (readableResult.message === "Authentication successful") {
-      setUser(prev => ({ ...prev, token: readableResult.token, loggedIn: true, keepConnected: keepConnected}))
+      setUser(prev => ({ ...prev, token: readableResult.token, refreshToken: readableResult.refreshToken, loggedIn: true, keepConnected: keepConnected}))
       if (keepConnected) {
-        window.localStorage.setItem('token', readableResult.token)
+        window.localStorage.setItem('refreshToken', readableResult.refreshToken)
       } else {
-        window.sessionStorage.setItem('token', readableResult.token)
+        window.sessionStorage.setItem('refreshToken', readableResult.refreshToken)
       }
       console.log(window.localStorage)
       console.log(window.sessionStorage)

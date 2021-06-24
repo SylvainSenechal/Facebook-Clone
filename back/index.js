@@ -1,26 +1,15 @@
 // todo : prepared statement fichier separe
-// todo : persistence login, refresh token
 // todo : voir dockers
 
 const express = require('express')
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt') // https://www.martinstoeckli.ch/hash/en/index.php
 const sqlite3 = require('better-sqlite3') // https://github.com/JoshuaWise/better-sqlite3/blob/master/docs/api.md
-const KEY_JWT = "badObviousTestKey"
-module.exports = KEY_JWT
-const authorization = require('./authorization')
+const {authorization, authentication} = require('./authorization')
 const createDatabase = require('./dbCreation.js')
-
-const WORK_FACTOR_BCRYPT = 12
-
 const port = process.env.PORT || 8080
-// const dbPassword = process.env.DB_PASSWORD
-// const dbName = process.env.DB_NAME
 
 const app = express()
 const databaseFile = new sqlite3('facebook.db', { verbose: console.log })
 app.locals.database = databaseFile
-
 createDatabase(databaseFile)
 
 app.use(express.json())
@@ -42,72 +31,7 @@ app.use((req, res, next) => {
 	next()
 })
 
-app.post('/register', async (req, res) => {
-	const pseudo = req.body.pseudo
-	const password = req.body.password
-	if (!pseudo || !password) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
-	}
-	const database = req.app.locals.database
-	const statementUserExist = database.prepare("SELECT pseudo FROM user WHERE pseudo = ?")
-	const foundUser = statementUserExist.get(pseudo)
-	if (foundUser) {
-		res.status(200).json({
-			message: 'User already exists'
-		})
-	} else {
-		try {
-			const hashPassword = await bcrypt.hash(password, WORK_FACTOR_BCRYPT)
-			const createUser = database.prepare("INSERT INTO user (pseudo, password) VALUES (?, ?)")
-			createUser.run(pseudo, hashPassword)
-			res.status(201).json({
-				message: 'User created'
-			})
-		} catch (error) {
-			console.log(error)
-			return res.status(500).json({ error: error })
-		}
-	}
-})
-
-app.post('/login', async (req, res) => {
-	const pseudo = req.body.pseudo
-	const password = req.body.password
-	if (!pseudo || !password) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
-	}
-	const database = req.app.locals.database
-	const statement = database.prepare("SELECT user_id, pseudo, password FROM user WHERE pseudo = ?")
-	const user = statement.get(pseudo)
-
-	if (!user) {
-		return res.status(401).json({ message: 'Authentication failed' })
-	}
-
-	try {
-		const match = await bcrypt.compare(password, user.password)
-		if (match === true) {
-			const token = jwt.sign({
-				userId: user.user_id,
-				pseudo: user.pseudo,
-			},
-				KEY_JWT,
-				{
-					expiresIn: "1min"
-				}
-			)
-			return res.status(200).json({ message: 'Authentication successful', token: token })
-		} else {
-			return res.status(401).json({ message: 'Authentication failed' })
-		}
-	} catch (error) {
-		return res.status(401).json({ message: 'Authentication failed' })
-	}
-})
+app.use('/', authentication)
 
 app.post('/friendRequest', authorization, async (req, res) => {
 	const idAsked = req.body.idAsked
