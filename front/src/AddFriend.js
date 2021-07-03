@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 
 const AddFriend = ({ token }) => {
-  const [friendSearch, setFriendSearch] = useState("")
-  const [friendFound, setFriendFound] = useState([])
+  const [peopleSearch, setPeopleSearch] = useState("")
+  const [foundPeople, setPeopleFound] = useState([])
   
   useEffect(() => {
     const getFriendsRecommended = async () => {
       // todo handle failed fetch
-      console.log(`http://localhost:8080/findFriends/${friendSearch}`)
-      if (friendSearch !== "") {
-        const result = await fetch(`http://localhost:8080/findFriends/${friendSearch}`, {
+      console.log(`http://localhost:8080/findFriends/${peopleSearch}`)
+      if (peopleSearch !== "") {
+        const result = await fetch(`http://localhost:8080/findFriends/${peopleSearch}`, {
           method: 'GET', // *GET, POST, PUT, DELETE, etc.
           headers: {
             'Content-Type': 'application/json',
@@ -18,11 +18,11 @@ const AddFriend = ({ token }) => {
         })
         const readableResult = await result.json()
         console.log(readableResult)
-        setFriendFound(readableResult.friendsFound)
+        setPeopleFound(readableResult.foundPeople)
       }
     }
     getFriendsRecommended()
-  }, [friendSearch])
+  }, [peopleSearch])
 
   const addFriend = async id => {
     const result = await fetch(`http://localhost:8080/friendRequest`, {
@@ -39,12 +39,12 @@ const AddFriend = ({ token }) => {
   return (
     <div id="search" className="dashboardElement">
       <label htmlFor="pseudo"> Search a Friend:
-        <input type="text" name="pseudo" value={friendSearch} onChange={e => setFriendSearch(e.target.value)} required />
+        <input type="text" name="pseudo" value={peopleSearch} onChange={e => setPeopleSearch(e.target.value)} required />
       </label>
       <div id="potentialFriends" >
         <p> Add these friends : </p>
         <ul>
-          {friendFound.map(friend => (
+          {foundPeople.map(friend => (
             <li key={friend.id}>
               pseudo : {friend.pseudo}, Friend id : {friend.id}
               <div id="addFriend" >

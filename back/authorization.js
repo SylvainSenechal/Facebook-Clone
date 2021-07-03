@@ -10,7 +10,7 @@ const KEY_JWT_REFRESH = "ohohoho"
 const authentication = express.Router()
 
 const TOKEN_LIFESPAN = "30sec"
-const TOKEN_REFRESH_LIFESPAN = "120sec"
+const TOKEN_REFRESH_LIFESPAN = "3600sec"
 
 const authorization = (req, res, next) => {
   const authHeader = req.headers['authorization']

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './login.css';
-import './dashboard.css';
+import './style/login.css';
+import './style/dashboard.css';
 import App from './App';
 
 ReactDOM.render(

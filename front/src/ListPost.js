@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const ListPost = ({ userId, token, refresh }) => {
+const ListPost = ({ userId, token, setRefresh, refresh }) => {
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
@@ -28,6 +28,7 @@ const ListPost = ({ userId, token, refresh }) => {
       },
       body: JSON.stringify({ postId: postId })
     })
+    setRefresh(refresh => refresh + 1)
     // const readableResult = await result.json()
   }
 
@@ -38,22 +39,30 @@ const ListPost = ({ userId, token, refresh }) => {
         posts.map(post => (
           post.id_poster === userId
             ? <div className="ownPost" key={post.idPost}>
-              <div className="idPost" > {post.id_poster} </div>
+              {/* <div className="idPost" > {post.poster_id} </div> */}
               <div className="pseudoPost" > {post.pseudo} </div>
               <div className="messagePost" > {post.content} </div>
-              <div className="likesPost" > {post.nb_likes} likes
-                <div>
-                  <button onClick={() => likePost(post.idPost)}> + </button>
+              <div className="likesPost" >
+                <button onClick={() => likePost(post.idPost)}> 👍 </button>
+                {post.nbLikes}
+                <div className="listOfLikers">
+                  {post.likers.map(pseudoLiker => (
+                    <div key={pseudoLiker}> {pseudoLiker}👍 </div>
+                  ))}
                 </div>
               </div>
             </div>
             : <div className="postFriend" key={post.idPost}>
-              <div className="idPost" > {post.id_poster} </div>
+              {/* <div className="idPost" > {post.poster_id} </div> */}
               <div className="pseudoPost" > {post.pseudo} </div>
               <div className="messagePost" > {post.content} </div>
-              <div className="likesPost" > {post.nb_likes} likes
-                <div>
-                  <button onClick={() => likePost(post.idPost)}> + </button>
+              <div className="likesPost" >
+                <button onClick={() => likePost(post.idPost)}> 👍 </button>
+                {post.nbLikes}
+                <div className="listOfLikers">
+                  {post.likers.map(pseudoLiker => (
+                    <div key={pseudoLiker}> {pseudoLiker}👍 </div>
+                  ))}
                 </div>
               </div>
             </div>

@@ -20,11 +20,9 @@ const PostCreation = ({ token, setRefresh }) => {
 
   return (
 
-    <form onSubmit={sendNewPost}>
-      <label>
-        Write a new post :
-        <textarea value={message} onChange={e => setMessage(e.target.value)}> </textarea>
-      </label>
+    <form id="postMessage" onSubmit={sendNewPost}>
+      <label htmlFor="postMessage"> Write a new post </label>
+      <textarea name="postMessage" rows="2" col="20" value={message} onChange={e => setMessage(e.target.value)}> </textarea>
       <input type="submit" value="Post new message" />
     </form>
 

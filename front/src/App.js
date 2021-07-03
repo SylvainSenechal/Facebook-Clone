@@ -83,6 +83,17 @@ const App = props => {
     return () => clearTimeout(timer);
   }, [user])
 
+  console.log(window.location.href)
+  const a = new URL(window.location.href)
+  // http://localhost:3000/?user=1
+  console.log(a)
+  console.log(a.searchParams)
+  console.log(a.searchParams.get("user"))
+  if (new URL(window.location.href).searchParams.get("user")) {
+    console.log('trouve')
+  } else {
+    console.log('non')
+  }
   // if (window.location.href === "http://localhost:3000/") {
   //   return <Login user={user} setUser={setUser} />
   // }

@@ -1,14 +1,20 @@
-// todo : prepared statement fichier separe
 // todo : voir dockers
-
+// todo : voir req.params vs req.query : https://stackoverflow.com/questions/35038857/setting-query-string-using-fetch-get-request
+// todo : virer async de sqlite
+// todo : voir comment gerer erreur avec requête db séparées
 const express = require('express')
 const sqlite3 = require('better-sqlite3') // https://github.com/JoshuaWise/better-sqlite3/blob/master/docs/api.md
-const {authorization, authentication} = require('./authorization')
-const createDatabase = require('./dbCreation.js')
+
+const createDatabase = require('./database/dbCreation.js')
+const messageRequests = require('./database/messageRequests.js')
+const friendRequests = require('./database/friendRequests.js')
+const databaseFile = new sqlite3('./database/facebook.db', { verbose: console.log })
+const { authorization, authentication } = require('./authorization.js')
+
 const port = process.env.PORT || 8080
 
 const app = express()
-const databaseFile = new sqlite3('facebook.db', { verbose: console.log })
+
 app.locals.database = databaseFile
 createDatabase(databaseFile)
 
@@ -34,157 +40,72 @@ app.use((req, res, next) => {
 app.use('/', authentication)
 
 app.post('/friendRequest', authorization, async (req, res) => {
+	const database = req.app.locals.database
 	const idAsked = req.body.idAsked
 	if (!idAsked) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
+		return res.status(400).json({ message: 'Request error' })
 	}
-	const database = req.app.locals.database
-	const statementFindPseudo = database.prepare("SELECT pseudo FROM user WHERE user_id = ?")
-	const pseudoAsked = statementFindPseudo.get(idAsked)
-	const statement = database.prepare("INSERT INTO friend_request (id_asker, id_asked, pseudo_asker, pseudo_asked) VALUES (?, ?, ?, ?)")
-	statement.run(req.userData.userId, req.body.idAsked, req.userData.pseudo, pseudoAsked.pseudo)
-
-	res.status(201).json({
-		message: 'Friend request sent'
-	})
+	friendRequests.addFriend(database, req.userData.userId, req.body.idAsked)
+	res.status(201).json({ message: 'Friend request sent' })
 })
 
 app.get('/friendRequest', authorization, async (req, res) => {
 	const database = req.app.locals.database
-	const statement = database.prepare("SELECT id_asker, pseudo_asker FROM friend_request WHERE id_asked = ?")
-	const result = statement.all(req.userData.userId)
-	let asking = []
-	for (let ask of result) {
-		asking.push({ idAsker: ask.id_asker, pseudoAsker: ask.pseudo_asker })
-	}
-
-	res.status(200).json({ friendsRequest: asking })
+	const pendingFriendRequests = friendRequests.getPendingRequests(database, req.userData.userId)
+	res.status(200).json({ friendsRequest: pendingFriendRequests })
 })
 
 app.post('/acceptRequest', authorization, async (req, res) => {
+	const database = req.app.locals.database
 	const idAsker = req.body.idAsker
 	const idAsked = req.userData.userId
 	if (!idAsker || !idAsked) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
+		return res.status(400).json({ message: 'Request error' })
 	}
-	const database = req.app.locals.database
-	const statement = database.prepare("SELECT pseudo_asker, pseudo_asked FROM friend_request WHERE id_asker = ? AND id_asked = ?")
-	const friendRequest = statement.get(idAsker, idAsked)
-	const addFriend = database.prepare("INSERT INTO friendship (id_friend1, id_friend2, pseudo_friend1, pseudo_friend2) VALUES (?, ?, ?, ?)")
-	const removeFriendRequest = database.prepare("DELETE FROM friend_request WHERE id_asker = ? AND id_asked = ?")
-	try {
-		addFriend.run(idAsker, idAsked, friendRequest.pseudo_asker, friendRequest.pseudo_asked)
-		removeFriendRequest.run(idAsker, idAsked)
-		removeFriendRequest.run(idAsked, idAsker)
-	} catch (error) {
-		console.log('Error friendship insertion')
-		return res.status(401).json({
-			message: 'Error on friendship insertion'
-		})
-	}
-
-	res.status(201).json({
-		message: 'friend added'
-	})
+	friendRequests.acceptFriendRequest(database, idAsker, idAsked)
+	res.status(201).json({ message: 'friend added' })
 })
 
 app.get('/friends', authorization, async (req, res) => {
 	const database = req.app.locals.database
-	const f1 = database.prepare("SELECT rowid, id_friend2 as id_friend, pseudo_friend2 as pseudo FROM friendship WHERE id_friend1 = ?")
-	const f2 = database.prepare("SELECT rowid, id_friend1 as id_friend, pseudo_friend1 as pseudo FROM friendship WHERE id_friend2 = ?")
-	let r1 = f1.all(req.userData.userId)
-	let r2 = f2.all(req.userData.userId)
-	let friends = []
-	for (let friend of r1) {
-		friends.push({ id: friend.id_friend, pseudo: friend.pseudo })
-	}
-	for (let friend of r2) {
-		friends.push({ id: friend.id_friend, pseudo: friend.pseudo })
-	}
+	const friends = friendRequests.getFriends(database, req.userData.userId)
 	return res.status(200).json({ friendsFound: friends })
 })
 
 app.get('/findFriends/:name', authorization, async (req, res) => {
+	const database = req.app.locals.database
 	const name = req.params.name
 	if (!name) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
+		return res.status(400).json({ message: 'Request error' })
 	}
-	const database = req.app.locals.database
-	const findPeople = database.prepare(`
-		SELECT user_id, pseudo
-		FROM user
-		WHERE pseudo LIKE ?
-		AND user_id != ?`)
-
-	const foundPeople = findPeople.all(`%${name}%`, req.userData.userId)
-	let persons = []
-	for (let people of foundPeople) {
-		persons.push({ id: people.user_id, pseudo: people.pseudo })
-	}
-
-	return res.status(200).json({ friendsFound: persons })
+	foundPeople = friendRequests.searchPeople(database, req.userData.userId, name)
+	return res.status(200).json({ foundPeople: foundPeople })
 })
 
 app.get('/posts', authorization, async (req, res) => {
 	const database = req.app.locals.database
-	const postsQuery = database.prepare(`
-		SELECT DISTINCT id_post, id_poster, pseudo_poster, content, nb_likes 
-		FROM posts, friendship 
-		WHERE id_poster = friendship.id_friend1 AND ? = friendship.id_friend2
-		OR id_poster = friendship.id_friend2 AND ? = friendship.id_friend1
-		OR id_poster = ?
-	`)
-	const posts = postsQuery.all(req.userData.userId, req.userData.userId, req.userData.userId)
-	const postsProcessed = []
-	for (let post of posts) {
-		postsProcessed.push({
-			idPost: post.id_post,
-			id_poster: post.id_poster,
-			pseudo: post.pseudo_poster,
-			content: post.content,
-			nb_likes: post.nb_likes
-		})
-	}
-
-	return res.status(200).json({ postsFound: postsProcessed })
+	const postsFound = messageRequests.getPosts(database, req.userData.userId)
+	return res.status(200).json({ postsFound: postsFound })
 })
 
 app.post('/newPost', authorization, async (req, res) => {
-	console.log('request sent by :', req.userData)
+	const database = req.app.locals.database
 	const message = req.body.message
 	if (!message) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
+		return res.status(400).json({ message: 'Request error' })
 	}
-	const database = req.app.locals.database
-	const insertMessage = database.prepare("INSERT INTO posts (id_poster, pseudo_poster, content, nb_likes) VALUES (?, ?, ?, ?)")
-	insertMessage.run(req.userData.userId, req.userData.pseudo, message, 0)
-	res.status(201).json({
-		message: 'Post created'
-	})
+	messageRequests.postPost(database, req.userData.userId, message)
+	res.status(201).json({ message: 'Post created' })
 })
 
 app.post('/likePost', authorization, async (req, res) => {
-	console.log('request sent by :', req.userData)
+	const database = req.app.locals.database
 	const postId = req.body.postId
 	if (!postId) {
-		return res.status(400).json({
-			message: 'Request error'
-		})
+		return res.status(400).json({ message: 'Request error' })
 	}
-	const database = req.app.locals.database
-	const likePost = database.prepare("UPDATE posts SET nb_likes = nb_likes + 1 WHERE id_post = ?")
-	likePost.run(postId)
-	res.status(201).json({
-		message: 'Post liked'
-	})
+	messageRequests.likePost(database, req.userData.userId, postId)
+	res.status(201).json({ message: 'Post liked' })
 })
 
 app.use((req, res, next) => {

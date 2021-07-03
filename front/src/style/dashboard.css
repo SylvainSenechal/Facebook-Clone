@@ -60,34 +60,82 @@
 
 .ownPost, .postFriend {
   display: grid;
-  grid-template-columns: 1fr 2fr 8fr 1fr;
-  grid-template-areas: 'id pseudo message likes';
+  grid-template-columns: 2fr 8fr 1fr;
+  /* grid-template-areas: 'id pseudo message likes'; */
+  grid-template-areas: 'pseudo message likes';
+  border-bottom: 1px solid grey;
 }
 
-.idPost {
-  grid-area: id;
+.ownPost:hover, .postFriend:hover {
+  background: gray;
 }
+
+/* .idPost {
+  grid-area: id;
+} */
 .pseudoPost {
   grid-area: pseudo;
 }
 .messagePost {
   grid-area: message;
+  overflow-wrap: anywhere;
 }
 .likesPost {
   grid-area: likes;
+  position: relative;
+}
+.likesPost > button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.listOfLikers {
+  display: none;
+}
+
+.likesPost:hover .listOfLikers{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: white;
+  left: 25px;
+  z-index: 1;
+}
+
+.listOfLikers {
+  width: 100px;
 }
 
 .ownPost {
-  background: red;
+  /* background: red; */
 }
 
 .postFriend {
-  background: green;
+  /* background: green; */
 }
 
 #wall {
   grid-area: wall;
 }
+
+#postMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#postMessage > * {
+  margin-right: 10px;
+}
+
+#postMessage > textarea {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 1px #999;
+}
+
+
 
 #legals {
   grid-area: legals;

@@ -31,7 +31,7 @@ const Login = ({ setUser }) => {
     })
     const readableResult = await result.json()
     if (readableResult.message === "Authentication successful") {
-      setUser(prev => ({ ...prev, token: readableResult.token, refreshToken: readableResult.refreshToken, loggedIn: true, keepConnected: keepConnected}))
+      setUser(prev => ({ ...prev, token: readableResult.token, refreshToken: readableResult.refreshToken, loggedIn: true, keepConnected: keepConnected }))
       if (keepConnected) {
         window.localStorage.setItem('refreshToken', readableResult.refreshToken)
       } else {
@@ -46,46 +46,33 @@ const Login = ({ setUser }) => {
     <div className="LoginPage">
       <div className="formsLoginRegister" >
         <div className="logInfo" style={{ "--order": 0 }}>
-          <p> Register </p>
+          <p className="borderLine"> Register </p>
           <form onSubmit={handleSubmitRegistration}>
-            <label htmlFor="pseudo"> Enter your name:
-              <input type="text" name="pseudo" id="pseudoRegister" value={pseudoRegister} onChange={e => setPseudoRegister(e.target.value)} required />
-            </label>
-            <label htmlFor="password"> Enter your password:
-              <input type="password" name="password" id="passwordRegister" value={passwordRegister} onChange={e => setPasswordRegister(e.target.value)} required />
-            </label>
+            <label htmlFor="pseudo"> Enter your name: </label>
+            <input type="text" name="pseudo" id="pseudoRegister" value={pseudoRegister} onChange={e => setPseudoRegister(e.target.value)} required />
+            <label htmlFor="password"> Enter your password: </label>
+            <input type="password" name="password" id="passwordRegister" value={passwordRegister} onChange={e => setPasswordRegister(e.target.value)} required />
             <input type="submit" value="Register" />
           </form>
           <div> {messageRegister} </div>
-          <div className="borderLine" />
         </div>
 
         <div className="logInfo" style={{ "--order": 1 }}>
-          <p> Login </p>
+          <p className="borderLine"> Login </p>
           <form onSubmit={handleSubmitLogin}>
-            <label htmlFor="pseudo"> Enter your name:
-              <input type="text" name="pseudo" id="pseudoLoginh" value={pseudoLogin} onChange={e => setPseudoLogin(e.target.value)} required />
-              {/* <input type="text" name="pseudo" id="pseudoLogin" value={user.pseudoLogin}
-                onChange={e => setUser(prev => ({ ...prev, pseudoLogin: e.target.value }))} required
-              /> */}
-            </label>
-            <label htmlFor="password"> Enter your password:
-              <input type="password" name="password" id="passwordLogin" value={passwordLogin} onChange={e => setPasswordLogin(e.target.value)} required />
-              {/* <input type="password" name="password" id="passwordLogin" value={user.passwordLogin}
-                onChange={e => setUser(prev => ({ ...prev, passwordLogin: e.target.value }))} required
-              /> */}
-            </label>
-            <label>
-              Keep me connected :
-              <input
-                name="keepConnected"
-                type="checkbox"
-                checked={keepConnected}
-                onChange={e => setKeepConnected(e.target.checked)} />
-            </label>
+            <label htmlFor="pseudo"> Enter your name: </label>
+            <input type="text" name="pseudo" id="pseudoLoginh" value={pseudoLogin} onChange={e => setPseudoLogin(e.target.value)} required />
+            <label htmlFor="password"> Enter your password: </label>
+            <input type="password" name="password" id="passwordLogin" value={passwordLogin} onChange={e => setPasswordLogin(e.target.value)} required />
+            <label htmlFor="keepConnectede"> Keep me connected :</label>
+            <input
+              name="keepConnected"
+              type="checkbox"
+              checked={keepConnected}
+              onChange={e => setKeepConnected(e.target.checked)}
+            />
             <input type="submit" value="Register" />
           </form>
-          <div className="borderLine" />
         </div>
       </div>
       < Footer />

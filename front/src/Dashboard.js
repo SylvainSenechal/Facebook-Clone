@@ -44,7 +44,7 @@ const Dashboard = ({ user, setUser }) => {
         <FriendList token={user.token} />
         <div id="wall" className="dashboardElement">
           <PostCreation token={user.token} setRefresh={setRefresh} />
-          <ListPost userId={userId} token={user.token} refresh={refresh} />
+          <ListPost userId={userId} token={user.token} setRefresh={setRefresh} refresh={refresh} />
         </div>
         <div id="legals" className="dashboardElement"> Legals </div>
         <AddFriend token={user.token} />
